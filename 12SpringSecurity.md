@@ -179,8 +179,20 @@ spring.security.user.password=admin123
 
 ![image](https://github.com/user-attachments/assets/a75a4eca-3297-4260-874f-178aae7e1974)
 
-- 
+- So Before store password in database we need to encode it
 
+![image](https://github.com/user-attachments/assets/5b4c81de-7a93-494d-9634-aea58797c483)
+
+- Now if I want to parmit some url then we can user `requestMatchers("/h2-console").permitAll()`
+
+![image](https://github.com/user-attachments/assets/a40a2ba0-d007-49ac-a609-3e7256fe3f87)
+
+- Disableing `csrf (cross site request forgery)` it is enabled by default in our application and that is only needed for web application for the backend or basic authentication not needed
+
+![image](https://github.com/user-attachments/assets/5aededc4-8f00-44a2-a87a-888ff339dafc)
+![image](https://github.com/user-attachments/assets/b6b024dc-ba14-47e0-b857-0b5b340d96e0)
+ 
+![image](https://github.com/user-attachments/assets/79c78c39-7c99-4fda-9e8f-160b246ad1f1)
 
 
 
