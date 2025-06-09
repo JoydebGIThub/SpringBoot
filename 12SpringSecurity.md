@@ -97,8 +97,99 @@ It is a specual proxy which is added in `DelegatingFilterProxy` which has the `S
 - If I provided a wrong password of configuration then that exception is handled by a filter called `ExceptionTranslationFilter` and it will throw the error (401, 403) to client.
 ![image](https://github.com/user-attachments/assets/e1624cf7-cdf6-4ad1-a7d9-da0a8ed86b66)
 
+-----------------------------------------------------------------------------------------------------------------------
+# Spring Security Basic Authentication
+- When we add the security to the spring application and hit the url it redirect to a `Login form` so we can say its a `form based authentication`
+- So if my application is totally backend and i don't have any frontend then I don't want the `formbasedauthentication`.
+- So, inorder to do that we want the `Basic Authentication`
+- If the user request is unauthendicated then then It will catch by the `ExceptionTranslationFilter` and send to the user
+![image](https://github.com/user-attachments/assets/95315b58-0d92-4ade-865c-ad6e24e9e250)
 
+- So, In `SecurityFilterChain` we have added `BasicAuthenticationFilter` and it will generate `UsernamePasswordAuthenticationToken` and it will pass the token to `AuthenticationManager` if it success then we stored it inside `SecurityContextHolder` and we let the user continue with the application else we store failor to the `SecurityContextHolder`.
+![image](https://github.com/user-attachments/assets/089a9f63-1887-45e6-b460-fd72159eea9a)
+
+- When we add the `spring-boot-starter-security` dependency then spring by default enable `FormBasedAuthentication` and the default filter is `UsernamePasswordAuthenticationFilter`, so we need to tell the spring to use `Basic Authentication filter` instade of `UsernamePasswordAuthenticationFilter`.
+- So, to do that we need to add `explecite bean for every things`.
+- Now add a `SecurityConfig` class and add the `@Configuration` to make the class `Configuration class` then add `@EnableWebSecurity` it will tells the spring security application, that we are enable the security features inside the spring boot application. For basic authentication we need to create a filter chain
+
+![image](https://github.com/user-attachments/assets/56c1e866-84aa-42dc-b6a7-06628060e383)
+
+- Now we also can add our own username and password in application.properties
+
+```properties
+spring.security.user.name=admin
+spring.security.user.password=admin123
+```
+- Untill we add the `@Bean` over the securityfilterchain method it will show us the `form based authentication` when we hit the url
+
+![image](https://github.com/user-attachments/assets/ea65f70a-1c8c-4f29-bcab-28d30a64093e)
+
+- After this when we hit the url it will directly login without asking for username and password.
+- So, for enable the authentication in `basic authentication` we need to tell the `http.httpBasic(withDefaults())` which url I want to `authenticated`.
+- So, we add a lambda function in `authorizeHttpRequests()` method so that each request is authenticated
+
+![image](https://github.com/user-attachments/assets/b1b47ad2-818d-4531-bb16-c33a0d5fd863)
+![image](https://github.com/user-attachments/assets/7537c1f4-8c14-4561-a3ae-14b54219521b)
+
+- Now we want to fecth the username and password from DB so we need an entity class 
+![image](https://github.com/user-attachments/assets/6485d72e-386f-41fa-9665-a6a57ea7c14e)
+
+- After entity we need a repository interface
+![image](https://github.com/user-attachments/assets/c74644de-02c0-47f0-8ef1-ea5e606e76c0)
+
+- So, now we need to create a custom `UserDetailsService` and tell the `Authentication provider` to use it and that `Authentication Prodiver` we need to set inside the `Authentication Manager` also we need the `Password Encoder`
+- So, we create a `CustomeUserDetailsService` and implements `UserDetailsService` and `Override` the `loadUserByUsername()` method
+
+![image](https://github.com/user-attachments/assets/ff4ba703-3ef9-4be6-9938-377a099c4fd8)
+ 
+- now inject the `repository` but the method returns UserDetails but our reporsitory give the User
+
+![image](https://github.com/user-attachments/assets/e516e309-afe8-4625-bbed-726b80008471)
+
+- To solve the issue we need to implements the `UserDetails` in the entity class and `override` all the implemented method
+
+![image](https://github.com/user-attachments/assets/4aea7eed-6fee-452b-a13f-5e5395314a7c)
+
+- So the implemented methods are `isAccoundNonExpried()` return true because an expried account cannot be authenticated
+- then comes `isAccontNonLock()` return ture because locked user cannot be authenticated
+
+![image](https://github.com/user-attachments/assets/1c26171d-7c14-4f28-870a-e2c882bda764)
+
+- And there are 2 more methods `isCredentailsNonExpired() and isEnable` are both return true
+
+![image](https://github.com/user-attachments/assets/a9ceaab5-6d8b-4be5-8b58-17ebd3907210)
   
+- So, we have another method `getAuthorities()` it will returns the authories granted to the user. Cannot return null. Its used for authorization purpose. Spring uses `GrantedAuthority` to take `authority` decession so we need to convert the role and pass it to the `SimpleGrantedAuthority()`
+
+![image](https://github.com/user-attachments/assets/9f0c071c-7e81-4999-afd3-6cf7059db856)
+
+- Now the error in the `CustomUserDetailsService` error is gone
+
+![image](https://github.com/user-attachments/assets/5546cb48-719b-4f85-8c07-68f18b89e017)
+
+- So, in configuration class we add a new method called `authenticationManager()` and create instance of `DaoAuthenticationProvider`, now `setUserDetailsService()`
+
+![image](https://github.com/user-attachments/assets/0f64f3d6-d66b-4680-8a46-f4486f26a7ab)
+
+- Now we need to tell the `authentication provider` which `password encoder` it needs to use
+
+![image](https://github.com/user-attachments/assets/06e1ea61-f581-4daa-9f88-121313c597d7)
+
+- Now we need to return the `ProviderManager`
+
+![image](https://github.com/user-attachments/assets/a75a4eca-3297-4260-874f-178aae7e1974)
+
+- 
+
+
+
+
+
+
+
+
+
+   
 
 
 
